@@ -1,0 +1,89 @@
+{
+  "name": "acme-love-cloudflare",
+  "version": "1.0.0",
+  "description": "Cloudflare DNS-01 challenge solver for acme-love — automate Let's Encrypt certificates with Cloudflare DNS",
+  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "node --test",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "acme",
+    "acme-love",
+    "cloudflare",
+    "dns-01",
+    "letsencrypt",
+    "let's encrypt",
+    "certificate",
+    "ssl",
+    "tls",
+    "typescript",
+    "rfc8555",
+    "acme-client",
+    "dns-challenge",
+    "cloudflare-dns"
+  ],
+  "author": {
+    "name": "Roman Pohorilchuk",
+    "email": "roman@pohorilchuk.com",
+    "url": "https://github.com/thebitrock"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thebitrock/acme-love-cloudflare.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thebitrock/acme-love-cloudflare/issues"
+  },
+  "homepage": "https://github.com/thebitrock/acme-love-cloudflare#readme",
+  "peerDependencies": {
+    "acme-love": ">=2.0.0"
+  },
+  "devDependencies": {
+    "acme-love": "^2.1.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/exec": "^7.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.5",
+    "@semantic-release/npm": "^12.0.2",
+    "@semantic-release/release-notes-generator": "^14.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "conventional-changelog-conventionalcommits": "^9.1.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2",
+    "semantic-release": "^24.2.7",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
