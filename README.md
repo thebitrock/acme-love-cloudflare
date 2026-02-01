@@ -66,7 +66,7 @@ await solver.cleanup(preparation);
 
 ## Requirements
 
-- Node.js >= 20
+- Node.js >= 22
 - acme-love >= 2.0.0
 - Cloudflare API token with `Zone.DNS` edit permissions
 
