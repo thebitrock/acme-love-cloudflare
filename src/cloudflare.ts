@@ -1,6 +1,6 @@
-import type { ChallengePreparation } from 'acme-love';
+import type { ChallengePreparation } from "acme-love";
 
-const CF_API = 'https://api.cloudflare.com/client/v4';
+const CF_API = "https://api.cloudflare.com/client/v4";
 
 export interface CloudflareConfig {
   /** Cloudflare API token with DNS edit permissions */
@@ -26,12 +26,16 @@ interface CloudflareDnsRecord {
   content: string;
 }
 
-async function cfFetch<T>(path: string, apiToken: string, options: RequestInit = {}): Promise<T> {
+async function cfFetch<T>(
+  path: string,
+  apiToken: string,
+  options: RequestInit = {},
+): Promise<T> {
   const res = await fetch(`${CF_API}${path}`, {
     ...options,
     headers: {
       Authorization: `Bearer ${apiToken}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(options.headers as Record<string, string>),
     },
   });
@@ -43,7 +47,9 @@ async function cfFetch<T>(path: string, apiToken: string, options: RequestInit =
   };
 
   if (!json.success) {
-    const msg = json.errors?.map((e) => e.message).join(', ') || 'Unknown Cloudflare API error';
+    const msg =
+      json.errors?.map((e) => e.message).join(", ") ||
+      "Unknown Cloudflare API error";
     throw new Error(`Cloudflare API error: ${msg}`);
   }
 
@@ -51,10 +57,10 @@ async function cfFetch<T>(path: string, apiToken: string, options: RequestInit =
 }
 
 async function findZoneId(apiToken: string, domain: string): Promise<string> {
-  const parts = domain.replace(/^_acme-challenge\./, '').split('.');
+  const parts = domain.replace(/^_acme-challenge\./, "").split(".");
 
   for (let i = 0; i < parts.length - 1; i++) {
-    const zone = parts.slice(i).join('.');
+    const zone = parts.slice(i).join(".");
     const zones = await cfFetch<Array<{ id: string; name: string }>>(
       `/zones?name=${encodeURIComponent(zone)}`,
       apiToken,
@@ -82,8 +88,14 @@ async function findZoneId(apiToken: string, domain: string): Promise<string> {
  * await solver.cleanup(preparation); // remove TXT records after
  * ```
  */
-export function createCloudflareDns01Solver(config: CloudflareConfig): CloudflareDns01Solver {
-  const { apiToken, propagationInterval = 5_000, propagationTimeout = 120_000 } = config;
+export function createCloudflareDns01Solver(
+  config: CloudflareConfig,
+): CloudflareDns01Solver {
+  const {
+    apiToken,
+    propagationInterval = 5_000,
+    propagationTimeout = 120_000,
+  } = config;
   const recordIds = new Map<string, string>();
 
   async function getZoneId(target: string): Promise<string> {
@@ -94,15 +106,19 @@ export function createCloudflareDns01Solver(config: CloudflareConfig): Cloudflar
   const setDns = async (preparation: ChallengePreparation): Promise<void> => {
     const zoneId = await getZoneId(preparation.target);
 
-    const record = await cfFetch<CloudflareDnsRecord>(`/zones/${zoneId}/dns_records`, apiToken, {
-      method: 'POST',
-      body: JSON.stringify({
-        type: 'TXT',
-        name: preparation.target,
-        content: preparation.value,
-        ttl: 120,
-      }),
-    });
+    const record = await cfFetch<CloudflareDnsRecord>(
+      `/zones/${zoneId}/dns_records`,
+      apiToken,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          type: "TXT",
+          name: preparation.target,
+          content: preparation.value,
+          ttl: 120,
+        }),
+      },
+    );
 
     recordIds.set(preparation.target, record.id);
   };
@@ -112,8 +128,8 @@ export function createCloudflareDns01Solver(config: CloudflareConfig): Cloudflar
 
     while (Date.now() - start < propagationTimeout) {
       try {
-        const { resolve } = await import('node:dns/promises');
-        const records = await resolve(preparation.target, 'TXT');
+        const { resolve } = await import("node:dns/promises");
+        const records = await resolve(preparation.target, "TXT");
         const flat = records.flat();
         if (flat.includes(preparation.value)) return;
       } catch {
@@ -133,7 +149,9 @@ export function createCloudflareDns01Solver(config: CloudflareConfig): Cloudflar
 
     const zoneId = await getZoneId(preparation.target);
 
-    await cfFetch(`/zones/${zoneId}/dns_records/${recordId}`, apiToken, { method: 'DELETE' });
+    await cfFetch(`/zones/${zoneId}/dns_records/${recordId}`, apiToken, {
+      method: "DELETE",
+    });
 
     recordIds.delete(preparation.target);
   };
