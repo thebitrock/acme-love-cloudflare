@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/thebitrock/acme-love-cloudflare/compare/v1.0.0...v1.0.1) (2026-02-01)
+
+### Bug Fixes
+
+- **release:** update Node.js version requirement from 20 to 22 ([1cd0f98](https://github.com/thebitrock/acme-love-cloudflare/commit/1cd0f98da0760fed00d115d911588305a193a11b))
+
 ## 1.0.0 (2026-02-01)
 
 ### Features
