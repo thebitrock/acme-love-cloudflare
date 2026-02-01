@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/thebitrock/acme-love-cloudflare/compare/v1.0.1...v1.1.0) (2026-02-01)
+
+### Features
+
+- **release:** add cleanupAll method to remove all TXT records in Cloudflare DNS-01 solver ([e50ba04](https://github.com/thebitrock/acme-love-cloudflare/commit/e50ba048d1b2a32bcb0f5376a59d31a630bbc922))
+
 ## [1.0.1](https://github.com/thebitrock/acme-love-cloudflare/compare/v1.0.0...v1.0.1) (2026-02-01)
 
 ### Bug Fixes
