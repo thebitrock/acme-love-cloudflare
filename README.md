@@ -31,6 +31,9 @@ const solver = createCloudflareDns01Solver({
 // Solve challenges automatically
 const ready = await account.solveDns01(order, solver);
 
+// Remove all _acme-challenge TXT records
+await solver.cleanupAll();
+
 // Finalize and download certificate
 const { derBase64Url } = await createAcmeCsr(['example.com', '*.example.com'], algo);
 const finalized = await account.finalize(ready, derBase64Url);
@@ -58,7 +61,13 @@ const solver = createCloudflareDns01Solver({
 
 ## Cleanup
 
-After certificate issuance, remove the TXT records:
+After certificate issuance, remove all `_acme-challenge` TXT records created during the solve:
+
+```typescript
+await solver.cleanupAll();
+```
+
+To remove a single record, pass the preparation object directly:
 
 ```typescript
 await solver.cleanup(preparation);
