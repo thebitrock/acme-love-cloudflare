@@ -17,6 +17,8 @@ export interface CloudflareDns01Solver {
   setDns: (preparation: ChallengePreparation) => Promise<void>;
   waitFor: (preparation: ChallengePreparation) => Promise<void>;
   cleanup: (preparation: ChallengePreparation) => Promise<void>;
+  /** Remove all TXT records created during this solver's lifetime. */
+  cleanupAll: () => Promise<void>;
 }
 
 interface CloudflareDnsRecord {
@@ -85,7 +87,7 @@ async function findZoneId(apiToken: string, domain: string): Promise<string> {
  * });
  *
  * const ready = await account.solveDns01(order, solver);
- * await solver.cleanup(preparation); // remove TXT records after
+ * await solver.cleanupAll(); // remove all TXT records
  * ```
  */
 export function createCloudflareDns01Solver(
@@ -97,6 +99,7 @@ export function createCloudflareDns01Solver(
     propagationTimeout = 120_000,
   } = config;
   const recordIds = new Map<string, string>();
+  const preparations: ChallengePreparation[] = [];
 
   async function getZoneId(target: string): Promise<string> {
     if (config.zoneId) return config.zoneId;
@@ -104,6 +107,7 @@ export function createCloudflareDns01Solver(
   }
 
   const setDns = async (preparation: ChallengePreparation): Promise<void> => {
+    preparations.push(preparation);
     const zoneId = await getZoneId(preparation.target);
 
     const record = await cfFetch<CloudflareDnsRecord>(
@@ -156,5 +160,12 @@ export function createCloudflareDns01Solver(
     recordIds.delete(preparation.target);
   };
 
-  return { setDns, waitFor, cleanup };
+  const cleanupAll = async (): Promise<void> => {
+    for (const p of preparations) {
+      await cleanup(p);
+    }
+    preparations.length = 0;
+  };
+
+  return { setDns, waitFor, cleanup, cleanupAll };
 }
