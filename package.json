@@ -56,7 +56,7 @@
   },
   "homepage": "https://github.com/thebitrock/acme-love-cloudflare#readme",
   "peerDependencies": {
-    "acme-love": ">=2.0.0"
+    "acme-love": ">=2.2.1"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
