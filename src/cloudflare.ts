@@ -26,11 +26,7 @@ interface CloudflareDnsRecord {
   content: string;
 }
 
-async function cfFetch<T>(
-  path: string,
-  apiToken: string,
-  options: RequestInit = {},
-): Promise<T> {
+async function cfFetch<T>(path: string, apiToken: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${CF_API}${path}`, {
     ...options,
     headers: {
@@ -40,7 +36,11 @@ async function cfFetch<T>(
     },
   });
 
-  const json = (await res.json()) as { success: boolean; result: T; errors: Array<{ message: string }> };
+  const json = (await res.json()) as {
+    success: boolean;
+    result: T;
+    errors: Array<{ message: string }>;
+  };
 
   if (!json.success) {
     const msg = json.errors?.map((e) => e.message).join(', ') || 'Unknown Cloudflare API error';
@@ -94,19 +94,15 @@ export function createCloudflareDns01Solver(config: CloudflareConfig): Cloudflar
   const setDns = async (preparation: ChallengePreparation): Promise<void> => {
     const zoneId = await getZoneId(preparation.target);
 
-    const record = await cfFetch<CloudflareDnsRecord>(
-      `/zones/${zoneId}/dns_records`,
-      apiToken,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          type: 'TXT',
-          name: preparation.target,
-          content: preparation.value,
-          ttl: 120,
-        }),
-      },
-    );
+    const record = await cfFetch<CloudflareDnsRecord>(`/zones/${zoneId}/dns_records`, apiToken, {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'TXT',
+        name: preparation.target,
+        content: preparation.value,
+        ttl: 120,
+      }),
+    });
 
     recordIds.set(preparation.target, record.id);
   };
@@ -137,11 +133,7 @@ export function createCloudflareDns01Solver(config: CloudflareConfig): Cloudflar
 
     const zoneId = await getZoneId(preparation.target);
 
-    await cfFetch(
-      `/zones/${zoneId}/dns_records/${recordId}`,
-      apiToken,
-      { method: 'DELETE' },
-    );
+    await cfFetch(`/zones/${zoneId}/dns_records/${recordId}`, apiToken, { method: 'DELETE' });
 
     recordIds.delete(preparation.target);
   };
